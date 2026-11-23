@@ -684,9 +684,12 @@ export async function startTelegramRepoBot(config: TelegramRepoBotConfig): Promi
     const isGroup = ctx.chat.type === "group" || ctx.chat.type === "supergroup"
     if (isGroup) {
       const handleRe = new RegExp(`@${ctx.me.username}\\b`, "gi")
-      const nome = (ctx.me.first_name ?? "").trim()
-      const nomeRe = nome.length >= 3
-        ? new RegExp(`(^|[^\\p{L}\\p{N}])${nome.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=$|[^\\p{L}\\p{N}])`, "iu")
+      // Nome de exibição + apelidos (BOT_NICKNAMES="Ari,…"), cada um como palavra inteira.
+      const nomes = [ctx.me.first_name ?? "", ...(process.env.BOT_NICKNAMES ?? "").split(",")]
+        .map(s => s.trim()).filter(s => s.length >= 3)
+        .map(s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+      const nomeRe = nomes.length
+        ? new RegExp(`(^|[^\\p{L}\\p{N}])(${nomes.join("|")})(?=$|[^\\p{L}\\p{N}])`, "iu")
         : null
       const mentioned = handleRe.test(text) || (nomeRe?.test(text) ?? false)
       const replyToBot = ctx.message.reply_to_message?.from?.id === ctx.me.id
