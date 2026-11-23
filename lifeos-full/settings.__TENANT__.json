@@ -1,8 +1,0 @@
-{
-  "daidentity": {
-    "name": "__DA_NAME__",
-    "voices": {
-      "main": { "voiceId": "pNInz6obpgDQGcFmaJgB", "volume": 0.8, "speed": 1.1 }
-    }
-  }
-}

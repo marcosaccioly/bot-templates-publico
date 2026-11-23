@@ -9,20 +9,15 @@ no seu próprio container Docker rootless, conversa pelo Telegram e usa o Claude
 1. **VPS nova** → `vps/preparar-vps.sh` (guiado, ver `vps/README.md`).
 2. **Primeiro bot** → escolha o molde abaixo e rode `./new-tenant.sh`.
 
-## Os três moldes
+## Os dois moldes
 
 | Molde | O que é | Cérebro | Cobrança |
 |-------|---------|---------|----------|
-| **repo-bot** | Bot de um PROJETO/equipe: o "cérebro" é um repositório git clonado. DM + grupos, fila por chat, reações, envio de arquivos, voz opcional | o próprio repo (`CLAUDE.md` do projeto) | `CLAUDE_CODE_OAUTH_TOKEN` (assinatura Claude) |
+| **repo-bot** | Bot de um PROJETO/equipe/coletivo (mesma linhagem do bot de uma cooperativa em produção): o "cérebro" é um repositório git clonado. DM + grupos, fila por chat, reações, envio de arquivos, voz opcional | o próprio repo (`CLAUDE.md` do projeto) | `CLAUDE_CODE_OAUTH_TOKEN` (assinatura Claude) |
 | **da-lean** | Assistente enxuto de uma PESSOA num escopo de trabalho: identidade/memória em 2 arquivos + workspace multi-repo | `identity/` (2 .md lidos por turno) | `ANTHROPIC_API_KEY` (API) |
-| **lifeos-full** | LifeOS completo containerizado (Pulse + identidade/TELOS + voz) | motor LifeOS | assinatura Claude |
 
-Escolha pela pergunta: *o bot serve um PROJETO (repo-bot), uma PESSOA num escopo
-de trabalho (da-lean) ou uma PESSOA com a vida inteira (lifeos-full)?*
-
-⚠️ O **lifeos-full** precisa do tarball do motor-base em `assets/`
-(`motor-base-v6.0.0-2026.07.14.tar.gz`), que **não** está neste repo — é
-distribuído à parte. Os outros dois moldes funcionam sem ele.
+Escolha pela pergunta: *o bot serve um PROJETO/grupo (repo-bot) ou uma PESSOA
+num escopo de trabalho (da-lean)?* Nenhum dos dois usa LifeOS.
 
 ## Uso
 
