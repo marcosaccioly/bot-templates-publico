@@ -1,0 +1,33 @@
+services:
+  __TENANT__-bot:
+    build: .
+    image: __TENANT__-bot:latest
+    container_name: __TENANT__-bot
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      TZ: "America/Sao_Paulo"
+      HOME: "/home/__TENANT__"
+      VAULT_DIR: "/home/__TENANT__/vault"
+      BOT_MODEL: "claude-sonnet-5"
+      BOT_FALLBACK_MODEL: "claude-opus-4-8"
+    # Isolamento: só volumes NOMEADOS, nenhum bind-mount do host, sem
+    # docker.sock, sem /home/operador. O bot não alcança nada do operador nem
+    # dos outros tenants (outros tenants).
+    volumes:
+      - __TENANT__-vault:/home/__TENANT__/vault
+      - __TENANT__-state:/home/__TENANT__/state
+      - __TENANT__-logs:/home/__TENANT__/logs
+      - __TENANT__-ssh:/home/__TENANT__/.ssh
+    security_opt:
+      - no-new-privileges:true
+    # Teto de CPU/memória: a VPS é compartilhada (Hostinger vigia CPU).
+    cpus: "0.75"
+    mem_limit: 768m
+    # Telegram é long-polling (só saída) — nenhuma porta publicada.
+
+volumes:
+  __TENANT__-vault:
+  __TENANT__-state:
+  __TENANT__-logs:
+  __TENANT__-ssh:

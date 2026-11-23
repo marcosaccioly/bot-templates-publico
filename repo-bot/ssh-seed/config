@@ -1,0 +1,6 @@
+# Alias do repo-vault — a chave só alcança o próprio repo (deploy key escopada).
+Host __VAULT_REPO_NAME__
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/__TENANT__-deploy
+  IdentitiesOnly yes

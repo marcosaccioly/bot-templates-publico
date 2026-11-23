@@ -1,0 +1,8 @@
+# Alias por repo — cada chave só alcança o próprio repo (deploy key escopada).
+# O nome do Host DEVE ser igual ao alias usado em WORKSPACE_REPOS (.env) e ao
+# nome do arquivo da chave. Duplique o bloco pra cada repo do workspace.
+Host meu-projeto
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/meu-projeto
+  IdentitiesOnly yes

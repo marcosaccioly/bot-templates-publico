@@ -1,0 +1,4 @@
+# Segredos e chaves NUNCA entram neste repo.
+**/.env
+**/deploy-keys/*
+!**/deploy-keys/README.md

@@ -1,0 +1,33 @@
+services:
+  __TENANT__:
+    build: .
+    image: __TENANT__-assistant:latest
+    container_name: __TENANT__
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DA_NAME: "__DA_NAME__"
+      PRINCIPAL_NAME: "__PRINCIPAL_NAME__"
+      TZ: "America/Sao_Paulo"
+      HOME: "/home/__TENANT__"
+      WORKSPACE_ROOT: "/home/__TENANT__/workspace"
+      IDENTITY_DIR: "/home/__TENANT__/identity"
+    # Isolamento: só volumes NOMEADOS, nenhum bind-mount do host, sem
+    # docker.sock, sem /home/operador. O assistente não alcança nada do operador
+    # nem dos outros tenants (outros tenants).
+    volumes:
+      - __TENANT__-identity:/home/__TENANT__/identity
+      - __TENANT__-workspace:/home/__TENANT__/workspace
+      - __TENANT__-state:/home/__TENANT__/state
+      - __TENANT__-logs:/home/__TENANT__/logs
+      - __TENANT__-ssh:/home/__TENANT__/.ssh
+    security_opt:
+      - no-new-privileges:true
+    # Telegram é long-polling (só saída) — nenhuma porta publicada.
+
+volumes:
+  __TENANT__-identity:
+  __TENANT__-workspace:
+  __TENANT__-state:
+  __TENANT__-logs:
+  __TENANT__-ssh:

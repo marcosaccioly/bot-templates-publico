@@ -1,0 +1,25 @@
+services:
+  __TENANT__:
+    build: .
+    image: __TENANT__:latest
+    container_name: __TENANT__
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DA_NAME: "__DA_NAME__"
+      TZ: "America/Sao_Paulo"
+      HOME: "/home/__TENANT__"
+      LIFEOS_VAULT_DIR: "/home/__TENANT__/vault"
+      GIT_CONFIG_GLOBAL: "/home/__TENANT__/.claude/.gitconfig"
+    # ISOLAMENTO (requisito do operador): só volumes NOMEADOS, nenhum bind-mount do host,
+    # sem docker.sock, sem /home/operador. O __DA_NAME__ não alcança nada do operador nem da tenant-b.
+    volumes:
+      - __TENANT__-claude:/home/__TENANT__/.claude
+      - __TENANT__-vault:/home/__TENANT__/vault
+    security_opt:
+      - no-new-privileges:true
+    # Telegram é long-polling (só saída) — nenhuma porta publicada.
+
+volumes:
+  __TENANT__-claude:
+  __TENANT__-vault:
