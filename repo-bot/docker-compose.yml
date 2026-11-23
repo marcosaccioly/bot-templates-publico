@@ -19,6 +19,9 @@ services:
       - __TENANT__-state:/home/__TENANT__/state
       - __TENANT__-logs:/home/__TENANT__/logs
       - __TENANT__-ssh:/home/__TENANT__/.ssh
+      # Memória automática + histórico das sessões do SDK: sobrevive a rebuild.
+      # Transcrições >30 dias são apagadas na subida (entrypoint); a memória fica.
+      - __TENANT__-claude:/home/__TENANT__/.claude
     security_opt:
       - no-new-privileges:true
     # Teto de CPU/memória: a VPS é compartilhada (Hostinger vigia CPU).
@@ -31,3 +34,4 @@ volumes:
   __TENANT__-state:
   __TENANT__-logs:
   __TENANT__-ssh:
+  __TENANT__-claude:

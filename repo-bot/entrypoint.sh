@@ -40,4 +40,8 @@ git -C "${VAULT}" remote set-url origin __VAULT_REPO_NAME__:__GH_OWNER__/__VAULT
 git -C "${VAULT}" pull --ff-only -q origin main \
   || echo "[entrypoint] pull na subida não foi fast-forward — segue com o vault local."
 
+# Faxina: transcrições de sessão com mais de 30 dias saem (a memória em
+# projects/*/memory/ fica). Segura o crescimento do volume de ~/.claude.
+find "${HOME}/.claude/projects" -name '*.jsonl' -mtime +30 -delete 2>/dev/null || true
+
 exec bun run "${HOME}/assistant/run.ts"

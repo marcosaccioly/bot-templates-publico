@@ -222,6 +222,9 @@ async function transcribeGroq(path: string, filename: string): Promise<string> {
 
 // A alma do @__BOT_HANDLE__. Base estática; a cada turno é concatenada a linha
 // "Quem está falando agora" (ver runAgentTurn), resolvida pelo BOT_ROSTER do env.
+/** Caminhos/comandos que tocam segredo: .env, chave SSH, credencial, ambiente de processo. */
+const SEGREDO = /\.env\b|\/\.ssh\/|\.credentials|\/proc\/[^\s]*\/environ|\bid_(ed25519|rsa)|-deploy\b/
+
 const SYSTEM_APPEND = `
 
 ## VOCÊ É O ASSISTENTE DE __CLIENT_NAME__ (__PROJECT_NAME__)
@@ -369,15 +372,21 @@ async function runAgentTurn(
       const READONLY = new Set(["Read", "Grep", "Glob", "LS", "NotebookRead", "TodoWrite", "WebFetch", "WebSearch"])
       if (READONLY.has(toolName)) {
         const p = pathOf()
-        if ((toolName === "Read" || toolName === "Grep" || toolName === "Glob" || toolName === "LS") && !insideVault(p) && !p.startsWith(MEDIA_TMP)) {
+        // Leitura: vault, mídia, /tmp e as próprias sessões/memória (~/.claude/projects).
+        // Nunca chave SSH, credencial ou ambiente de processo (onde mora o token).
+        const leituraOk = insideVault(p) || p.startsWith(MEDIA_TMP) || p.startsWith("/tmp/") || p.startsWith(`${HOME}/.claude/projects`)
+        if ((toolName === "Read" || toolName === "Grep" || toolName === "Glob" || toolName === "LS") && (!leituraOk || SEGREDO.test(p))) {
           return { behavior: "deny", message: "Este assistente só lê o repositório de __CLIENT_NAME__." }
         }
         return { behavior: "allow" }
       }
       if (toolName === "Bash") {
         const cmd = "command" in obj ? String(obj.command) : String(input)
-        const proibido = /~\/\.claude|\/\.claude\/|\.env\b|\bcurl\b|\bwget\b|\bssh\b|\bsudo\b|\bsystemctl\b|printenv|\benv\b\s*$|\brm\s+-rf?\b|31337|\/notify/
-        if (proibido.test(cmd)) {
+        // Liberado (23/11): curl/wget e ler as próprias sessões em ~/.claude/projects.
+        // Segue proibido: segredo (SEGREDO), ssh/sudo, rm -r, e ~/.claude fora de projects/.
+        const claudeFora = /(~|\/home\/[a-z]+)\/\.claude(?!\/projects)/.test(cmd)
+        const proibido = /\bssh\b|\bsudo\b|\bsystemctl\b|printenv|\benv\b\s*($|[|;&])|\$\{?[A-Z_]*(TOKEN|KEY|SECRET)|\brm\s+-[a-z]*r|31337|\/notify/
+        if (claudeFora || proibido.test(cmd) || SEGREDO.test(cmd)) {
           log("warn", "canUseTool: Bash bloqueado", { cmd: cmd.slice(0, 160) })
           return { behavior: "deny", message: "Comando fora do escopo do assistente." }
         }

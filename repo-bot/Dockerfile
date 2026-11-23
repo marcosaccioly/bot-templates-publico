@@ -10,6 +10,9 @@ FROM oven/bun:1
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
       git ca-certificates tini openssh-client python3 tzdata \
+    # Documentos: ler PDF (pdftotext/pdftoppm — o Read do SDK usa), HTML→PDF
+    # (weasyprint), conversões (pandoc), Word/Excel em Python, fontes com acento.
+      poppler-utils weasyprint pandoc python3-docx python3-openpyxl fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -s /bin/bash __TENANT__
@@ -26,7 +29,7 @@ COPY ssh-seed/config /home/__TENANT__/.ssh/config
 COPY ssh-seed/known_hosts /home/__TENANT__/.ssh/known_hosts
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN mkdir -p /home/__TENANT__/state/telegram /home/__TENANT__/logs/telegram /home/__TENANT__/vault \
+RUN mkdir -p /home/__TENANT__/state/telegram /home/__TENANT__/logs/telegram /home/__TENANT__/vault /home/__TENANT__/.claude \
     && chmod +x /usr/local/bin/entrypoint.sh \
     && chmod 700 /home/__TENANT__/.ssh \
     && chmod 600 /home/__TENANT__/.ssh/config /home/__TENANT__/.ssh/known_hosts \
