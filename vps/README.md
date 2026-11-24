@@ -1,12 +1,12 @@
 # vps/ — preparar uma VPS nova pra hospedar bots
 
-`preparar-vps.sh` monta, guiado e perguntando antes de cada passo, a base
-usada em produção: Ubuntu 24.04, usuário próprio com sudo, SSH só por chave
+`preparar-vps.sh` monta, guiado e perguntando antes de cada passo, a mesma base
+da VPS do Marquito: Ubuntu 24.04, usuário próprio com sudo, SSH só por chave
 (sem root, sem senha), ufw + fail2ban + atualizações automáticas, swap se a RAM
 for pouca, **Docker rootless** (com delegação de CPU/memória pro `cpus:`/`mem_limit:`
 do compose), Bun + Claude Code + GitHub CLI e, opcionalmente, o clone deste repo.
 
-O que **não** faz: não instala LifeOS/Pulse, não copia nada de outra máquina,
+O que **não** faz: não instala LifeOS/Pulse, não copia nada da VPS do Marquito,
 não mexe em domínio/nginx/certificado, não cria bot (isso é o `new-tenant.sh`).
 
 ## Rodar
@@ -25,6 +25,6 @@ chave por OUTRO terminal — senão não desliga a senha (evita ficar trancado p
 
 ## Testado
 
-Modo `--simular` percorrido inteiro (23/11/2026). A execução real ainda não foi
-feita numa VPS limpa — a primeira pessoa a rodar é o teste. Se algo falhar, o
-log diz o comando exato.
+Modo `--simular` percorrido inteiro (23/11/2026). Execução real feita pelo
+André numa VPS limpa (24/11/2026) — passou. Se algo falhar, o log diz o
+comando exato.
